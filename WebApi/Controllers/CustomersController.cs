@@ -112,8 +112,6 @@ namespace RocketStoreApi.Controllers
             RestService rs = new RestService();
             Forward f = new Forward();
 
-            f = await rs.GetForwardAsync().ConfigureAwait(false);
-
             if (customers.FailedWith(ErrorCodes.InvalidID))
             {
                 return this.BadRequest(
@@ -135,15 +133,22 @@ namespace RocketStoreApi.Controllers
                     });
             }
 
+            f = await rs.GetForwardAsync(customers.Value.City).ConfigureAwait(false);
+
+            if (f != null && f.Longitude != 0)
+            {
+                customers.Value.Forward = f;
+            }
+
             return this.Ok(customers);
         }
 
         /// <summary>
-        /// delete A customer by id.
+        /// Delete a customer by id.
         /// </summary>
-        /// <param name="id">recebemos o id do customer que qwueremos.</param>
+        /// <param name="id"> Id of the wanted customer.</param>
         /// <returns>
-        /// return A customer.
+        /// return a customer.
         /// </returns>
         [HttpDelete("api/customers/{id}")]
         [ProducesResponseType(typeof(ProblemDetails), (int)HttpStatusCode.BadRequest)]

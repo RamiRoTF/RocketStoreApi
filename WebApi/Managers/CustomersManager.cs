@@ -95,16 +95,16 @@ namespace RocketStoreApi.Managers
             // Apply filters based on 'name' and 'emailAddress' parameters
             if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(c => c.Name.Contains(name, System.StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
             }
 
             if (!string.IsNullOrEmpty(emailAddress))
             {
-                query = query.Where(c => c.EmailAddress.Contains(emailAddress, System.StringComparison.OrdinalIgnoreCase));
+                query = query.Where(c => c.EmailAddress.Contains(emailAddress, StringComparison.OrdinalIgnoreCase));
             }
 
             customers = await query.ToListAsync().ConfigureAwait(false);
-            
+
             foreach (Entities.Customer item in customers)
             {
                 result.Add(this.Mapper.Map<Entities.Customer, Models.CustomerLista>(item));
@@ -145,7 +145,7 @@ namespace RocketStoreApi.Managers
                 this.Logger.LogWarning($"This customer doesnt exists.");
 
                 return Result<Models.CustomerByID>.Failure(
-                    ErrorCodes.CustomerDontExists,
+                    ErrorCodes.CustomerDoesntExists,
                     $"Customer Dont Exist.");
             }
 
@@ -156,31 +156,20 @@ namespace RocketStoreApi.Managers
         /// <inheritdoc/>       
         public async Task<Result<bool>> DeleteCustomersByIDAsync(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                this.Logger.LogWarning($"Id invalido.");
+            Entities.Customer customer = await this.Context.Customers.FindAsync(id).ConfigureAwait(false);
 
-                return Result<bool>.Failure(
-                    ErrorCodes.InvalidID,
-                    $"Invalid Id.");
+            if (customer != null)
+            {
+                this.Context.Customers.Remove(customer);
+                await this.Context.SaveChangesAsync().ConfigureAwait(false);
             }
             else
             {
-                Entities.Customer customer = await this.Context.Customers.FindAsync(id).ConfigureAwait(false);
+                this.Logger.LogWarning($"This customer doesnt exists.");
 
-                if (customer != null)
-                {
-                    this.Context.Customers.Remove(customer);
-                    await this.Context.SaveChangesAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    this.Logger.LogWarning($"This customer doesnt exists.");
-
-                    return Result<bool>.Failure(
-                        ErrorCodes.CustomerDontExists,
-                        $"Customer Dont Exist.");
-                }
+                return Result<bool>.Failure(
+                    ErrorCodes.CustomerDoesntExists,
+                    $"Customer Dont Exist.");
             }
 
             return Result<bool>.Success(true);

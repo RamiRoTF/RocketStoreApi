@@ -92,7 +92,16 @@ namespace RocketStoreApi.Tests
                 .ConfigureAwait(false);
         }
 
-
+        /// <summary>
+        /// Send a get request.
+        /// </summary>
+        /// <typeparam name="T">The model type.</typeparam>
+        /// <param name="endpointPath">The endpoint path.</param>
+        /// <param name="model">The model instance.</param>
+        /// <returns>
+        /// The <see cref="Task{TResult}"/> that represents the asynchronous operation.
+        /// The <see cref="HttpResponseMessage"/> instance.
+        /// </returns>
         public async Task<HttpResponseMessage> GetAsync<T>(string endpointPath, T model)
         {
             string json = JsonSerializer.Serialize(model);
@@ -107,6 +116,16 @@ namespace RocketStoreApi.Tests
                 .ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Send a delete request.
+        /// </summary>
+        /// <typeparam name="T">The model type.</typeparam>
+        /// <param name="endpointPath">The endpoint path.</param>
+        /// <param name="model">The model instance.</param>
+        /// <returns>
+        /// The <see cref="Task{TResult}"/> that represents the asynchronous operation.
+        /// The <see cref="HttpResponseMessage"/> instance.
+        /// </returns>
         public async Task<HttpResponseMessage> DeleteAsync<T>(string endpointPath, T model)
         {
             string json = JsonSerializer.Serialize(model);

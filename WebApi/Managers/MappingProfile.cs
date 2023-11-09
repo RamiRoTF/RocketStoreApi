@@ -25,6 +25,7 @@ namespace RocketStoreApi.Managers
                         target.Id = Guid.NewGuid().ToString();
                     });
 
+            // mapping que tive de adicionar para mostrar diferentes informações.
             this.CreateMap<Entities.Customer, Models.CustomerLista>();
             this.CreateMap<Entities.Customer, Models.Customer>();
             this.CreateMap<Entities.Customer, Models.CustomerByID>();

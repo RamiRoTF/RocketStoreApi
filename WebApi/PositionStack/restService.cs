@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -7,6 +6,9 @@ using RocketStoreApi.Models;
 
 namespace RocketStoreApi.PositionStack
 {
+    /// <summary>
+    /// Class to Consume Position Stack API.
+    /// </summary>
     public class RestService
     {
         HttpClient _client;
@@ -14,10 +16,14 @@ namespace RocketStoreApi.PositionStack
 
         public Forward Item { get; private set; }
 
-        private string apiKey = "212b66992ff71418760fa8f885d30bc4";
+        private string apiKey = "f3768bc92a7a33fa246282abcef146e9";
 
-        private string basepath = $"https://api.positionstack.com/v1/";
+        private string basepath = $"http://api.positionstack.com/v1/";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RestService"/> class.
+        /// to initialize the HttpClient and JsonSerializerOptions.
+        /// </summary>
         public RestService()
         {
             this._client = new HttpClient();
@@ -28,10 +34,15 @@ namespace RocketStoreApi.PositionStack
             };
         }
 
-        public async Task<Forward> GetForwardAsync()
+        /// <summary>
+        /// Method for performing a forward geocoding request.
+        /// </summary>
+        /// <param name="city"> The city of the customer.</param>
+        /// <returns> return a Forward Object.</returns>
+        public async Task<Forward> GetForwardAsync(string city)
         {
             this.Item = new Forward();
-            string path = this.basepath + this.apiKey + "&query=Braga";
+            string path = this.basepath + "forward?access_key=" + this.apiKey + "&query="+city;
             Uri uri = new Uri(path);
             try
             {
@@ -44,7 +55,6 @@ namespace RocketStoreApi.PositionStack
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(@"\tERROR {0}", ex.Message);
                 throw;
             }
 

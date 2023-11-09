@@ -1,5 +1,8 @@
 ﻿namespace RocketStoreApi.Models
 {
+    /// <summary>
+    ///  Class needed to consume the API. It contains geolocation information.
+    /// </summary>
     public class Forward
     {
         public double Latitude { get; set; }

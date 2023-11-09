@@ -11,9 +11,17 @@
         /// The customer already exists.
         /// </summary>
         public const string CustomerAlreadyExists = "CustomerAlreadyExists";
+        
+        /// <summary>
+        /// The Id Sended was invalid.
+        /// </summary>
         public const string InvalidID = "InvalidID";
-        public const string CustomerDontExists = "CustomerDontExists";
-        public const string CustomersNotFound = "CustomersNotFound";
+        
+        /// <summary>
+        /// The Customer requested doesnt exists.
+        /// </summary>
+        public const string CustomerDoesntExists = "CustomerDontExists";
+        
 
         #endregion
     }

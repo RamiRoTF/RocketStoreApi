@@ -73,6 +73,19 @@ namespace RocketStoreApi.Models
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the customer email address.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        [EmailAddress]
+        [DisplayName("Geolocation")]
+        [JsonPropertyName("forward")]
+        public Forward Forward
+        {
+            get;
+            set;
+        }
+
         #endregion
     }
 }

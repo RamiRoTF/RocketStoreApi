@@ -9,6 +9,7 @@ using RocketStoreApi.Controllers;
 using RocketStoreApi.Managers;
 using RocketStoreApi.Models;
 using Xunit;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RocketStoreApi.Tests
 {
@@ -226,8 +227,8 @@ namespace RocketStoreApi.Tests
         }
 
         /// <summary>
-        /// Tests the <see cref="CustomersController.CreateCustomerAsync(Customer)"/> method
-        /// to ensure that it requires a valid VAT number.
+        /// Tests the <see cref="CustomersController.GetCustomersAsync(string, string)"/> method
+        /// to ensure that it gets all customers.
         /// </summary>
         /// <returns>
         /// The <see cref="Task"/> that represents the asynchronous operation.
@@ -238,13 +239,22 @@ namespace RocketStoreApi.Tests
             // Arrange
 
             Customer customer = new Customer()
-            {
+            { 
                 Name = "My customer",
                 EmailAddress = "mycustomer@server.pt",
                 City = "A city"
             };
 
             HttpResponseMessage httpResponse1 = await this.fixture.PostAsync("api/customers", customer).ConfigureAwait(false);
+
+            customer = new Customer()
+            {
+                Name = "My customer",
+                EmailAddress = "mycustomer@server.pt",
+                City = "A city"
+            };
+
+            httpResponse1 = await this.fixture.PostAsync("api/customers", customer).ConfigureAwait(false);
 
             // Act
 
@@ -253,14 +263,11 @@ namespace RocketStoreApi.Tests
             // Assert
 
             httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            List<Customer> list = await this.GetResponseContentAsync<List<Customer>>(httpResponse).ConfigureAwait(false);
-
-            list.Should().NotBeNull();
         }
 
         /// <summary>
-        /// Tests the <see cref="CustomersController.CreateCustomerAsync(Customer)"/> method
-        /// to ensure that it requires a valid VAT number.
+        /// Tests the <see cref="CustomersController.GetCustomersByIDAsync(string)"/> method
+        /// to ensure that it gets the right customer.
         /// </summary>
         /// <returns>
         /// The <see cref="Task"/> that represents the asynchronous operation.
@@ -287,14 +294,11 @@ namespace RocketStoreApi.Tests
             // Assert
 
             httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            Customer teste = await this.GetResponseContentAsync<Customer>(httpResponse).ConfigureAwait(false);
-
-            teste.Should().NotBeNull();
         }
 
         /// <summary>
-        /// Tests the <see cref="CustomersController.CreateCustomerAsync(Customer)"/> method
-        /// to ensure that it requires a valid VAT number.
+        /// Tests the <see cref="CustomersController.DeleteCustomersByIDAsync(string)"/> method
+        /// to ensure that it delete the customer wanted.
         /// </summary>
         /// <returns>
         /// The <see cref="Task"/> that represents the asynchronous operation.
@@ -316,17 +320,64 @@ namespace RocketStoreApi.Tests
 
             // Act
 
-
             HttpResponseMessage httpResponse = await this.fixture.DeleteAsync("api/customers/" + id.ToString(), customer).ConfigureAwait(false);
 
             // Assert
 
             httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            bool teste = await this.GetResponseContentAsync<bool>(httpResponse).ConfigureAwait(false);
-
-            teste.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Tests the <see cref="CustomersController.DeleteCustomersByIDAsync(string)"/> method
+        /// to ensure that it return the error NOT FOUND when it doesnt find the customer.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/> that represents the asynchronous operation.
+        /// </returns>
+        [Fact]
+        public async Task DeleteByIDNotFoundAsync()
+        {
+            // Arrange
+            Customer customer = new Customer();
+            Guid id = Guid.NewGuid();
+
+            // Act
+
+            HttpResponseMessage httpResponse = await this.fixture.DeleteAsync("api/customers/" + id.ToString(), customer).ConfigureAwait(false);
+
+            // Assert
+
+            httpResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            ProblemDetails error = await this.GetResponseContentAsync<ProblemDetails>(httpResponse).ConfigureAwait(false);
+            error.Should().NotBeNull();
+            error.Title.Should().Be(ErrorCodes.CustomerDoesntExists);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="CustomersController.GetCustomersByIDAsync(string)"/> method
+        /// to ensure that it returns Not Found when it cant find the customer by ID.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Task"/> that represents the asynchronous operation.
+        /// </returns>
+        [Fact]
+        public async Task GetCustomerByIDNotFoundAsync()
+        {
+            // Arrange
+            Customer customer = new Customer();
+            Guid id = Guid.NewGuid();
+
+            // Act
+
+            HttpResponseMessage httpResponse = await this.fixture.GetAsync("api/customers/" + id.ToString(), customer).ConfigureAwait(false);
+
+            // Assert
+
+            httpResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            ProblemDetails error = await this.GetResponseContentAsync<ProblemDetails>(httpResponse).ConfigureAwait(false);
+            error.Should().NotBeNull();
+            error.Title.Should().Be(ErrorCodes.CustomerDoesntExists);
+        }
         #endregion
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using RocketStoreApi.Entities;
 using RocketStoreApi.Managers;
 using RocketStoreApi.Models;
+using RocketStoreApi.PositionStack;
 
 namespace RocketStoreApi.Controllers
 {
@@ -110,6 +109,11 @@ namespace RocketStoreApi.Controllers
             Result<CustomerByID> customers = await this.HttpContext.RequestServices.GetRequiredService<ICustomersManager>()
                 .GetCustomersByIDAsync(id).ConfigureAwait(false);
 
+            RestService rs = new RestService();
+            Forward f = new Forward();
+
+            f = await rs.GetForwardAsync().ConfigureAwait(false);
+
             if (customers.FailedWith(ErrorCodes.InvalidID))
             {
                 return this.BadRequest(
@@ -173,10 +177,6 @@ namespace RocketStoreApi.Controllers
 
             return this.Ok();
         }
-
-
-
-
         #endregion
 
         #region Private Methods

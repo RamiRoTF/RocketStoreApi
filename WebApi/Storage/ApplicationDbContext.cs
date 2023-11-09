@@ -47,7 +47,6 @@ namespace RocketStoreApi.Storage
             modelBuilder.Entity<Customer>().Property(t => t.EmailAddress).HasMaxLength(200).IsRequired();
             modelBuilder.Entity<Customer>().Property(t => t.VatNumber).HasMaxLength(9);
             modelBuilder.Entity<Customer>().Property(t => t.City).HasMaxLength(200).IsRequired();
-
         }
 
         #endregion
